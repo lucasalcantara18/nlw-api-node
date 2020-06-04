@@ -31,6 +31,9 @@ routes.get('/itens', itensController.listAll);
 
 routes.post('/points', pointsController.create);
 
+routes.get('/points/:id', pointsController.findOne);
+
+routes.get('/points', pointsController.findAll);
 
 
 export default routes;

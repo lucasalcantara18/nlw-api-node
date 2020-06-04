@@ -2,8 +2,14 @@ import express, { response } from 'express';
 //Usando typescript as bibliotecas necessitam vir com as definições de tipo. Por isso é necessario instalar a definição de tipos: npm i @types/express.
 import path from 'path';
 import routes from './routes';
-const app = express();
+import cors from 'cors';
+
 //cria a aplicação
+const app = express();
+
+//cors: o cors define na api quais endereçõs externos terão acesso.
+app.use(cors());
+
 app.use(express.json());
 //Diz ao express que esta sendo usando json. é necessario.
 app.use(routes);
