@@ -5,18 +5,19 @@ export  default class PointsController {
 
     
     async create(req: Request, res: Response){
-        console.log("entou no cadastro");
+    console.log(req.body);
     const {name, email, whatsapp, latitude, longitude, city, uf, itens} = req.body;
+    
     
     //variavel para lidar com transaction do bd, caso uma insersão falhar, é efetuado o rollback
     const trx = await knex.transaction();
 
-    const point = {image: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60', 
+    const point = {image: req.file.filename, 
                    name, email, whatsapp, latitude, longitude, city, uf}
 
     const ids = await trx('points').insert(point);
 
-    const pointItens = itens.map((item_id:number) => {
+    const pointItens = itens.split(',').map((item:string) => Number(item.trim())).map((item_id:number) => {
         return{
             iten_id: item_id,
             point_id: ids[0]
@@ -45,8 +46,13 @@ export  default class PointsController {
 
         const itens = await knex('itens').join('point_itens', 'itens.id', '=', 'point_itens.iten_id').where('point_itens.point_id', id);
 
+        const serielizedPoint = {
+            ...point,
+            image_url: `http://localhost:3333/uploads/${point.image}`
+        }
 
-        return res.json({point, itens});
+
+        return res.json({serielizedPoint, itens});
     }
 
     async findAll(req: Request, res: Response){
@@ -63,8 +69,15 @@ export  default class PointsController {
                                          .distinct()
                                          .select('points.*');
 
+        const serielizedPoints = points.map(point => {
+            return{
+               ...point,
+                image_url: `http://localhost:3333/uploads/${point.image}`
+            }
+        });
 
-        return res.json(points);
+
+        return res.json(serielizedPoints);
     }
 
 

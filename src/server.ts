@@ -3,7 +3,7 @@ import express, { response } from 'express';
 import path from 'path';
 import routes from './routes';
 import cors from 'cors';
-
+import { errors } from 'celebrate';
 //cria a aplicação
 const app = express();
 
@@ -17,6 +17,8 @@ app.use(routes);
 
 app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 
+//lida como o back end ira retornar os erros ao front-end
+app.use(errors());
 
 app.listen(3333);
 //porta onde será ouvido
